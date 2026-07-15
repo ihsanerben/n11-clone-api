@@ -22,6 +22,7 @@ app:
     access-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS:1200000}
     refresh-expiration-days: ${JWT_REFRESH_EXPIRATION_DAYS:14}
     verification-expiration-hours: ${EMAIL_VERIFICATION_EXPIRATION_HOURS:24}
+    password-reset-expiration-minutes: ${PASSWORD_RESET_EXPIRATION_MINUTES:60}
     refresh-cookie-name: refreshToken
     cookie-secure: ${COOKIE_SECURE:true}
   email:

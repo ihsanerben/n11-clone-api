@@ -11,6 +11,7 @@ public record AuthProperties(
 		@Positive long accessExpirationMs,
 		@Positive long refreshExpirationDays,
 		@Positive long verificationExpirationHours,
+		@Positive long passwordResetExpirationMinutes,
 		@NotBlank String refreshCookieName,
 		boolean cookieSecure
 ) {}

@@ -35,6 +35,7 @@ class HealthControllerIT {
 		registry.add("app.auth.access-expiration-ms", () -> "1200000");
 		registry.add("app.auth.refresh-expiration-days", () -> "14");
 		registry.add("app.auth.verification-expiration-hours", () -> "24");
+		registry.add("app.auth.password-reset-expiration-minutes", () -> "60");
 		registry.add("app.auth.refresh-cookie-name", () -> "refreshToken");
 		registry.add("app.auth.cookie-secure", () -> "false");
 		registry.add("app.email.api-key", () -> "test-key");
@@ -63,6 +64,6 @@ class HealthControllerIT {
 				.query(Integer.class)
 				.single();
 
-		assertThat(appliedMigrations).isEqualTo(2);
+		assertThat(appliedMigrations).isEqualTo(3);
 	}
 }

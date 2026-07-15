@@ -29,7 +29,7 @@ credentials or allowed origin.
 Auth and email delivery additionally require `JWT_SECRET`, `RESEND_API_KEY`,
 `RESEND_FROM_EMAIL`, and `FRONTEND_BASE_URL`. Optional lifetime settings are
 `JWT_ACCESS_EXPIRATION_MS`, `JWT_REFRESH_EXPIRATION_DAYS`, and
-`EMAIL_VERIFICATION_EXPIRATION_HOURS`.
+`EMAIL_VERIFICATION_EXPIRATION_HOURS`, and `PASSWORD_RESET_EXPIRATION_MINUTES`.
 
 ## Tests
 
