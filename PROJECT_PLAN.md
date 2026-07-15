@@ -26,7 +26,7 @@ Bir kullanıcı aynı anda yalnızca bir rolde olabilir (`User.role` tek alan).
 
 | Katman | Teknoloji |
 |---|---|
-| Backend | Java 21, Spring Boot 3.x, PostgreSQL, Spring Data JPA, Spring Security + JWT |
+| Backend | Java 21, Spring Boot 4.x, PostgreSQL, Spring Data JPA, Spring Security + JWT |
 | Migration | Flyway (`ddl-auto: validate`, asla `update` değil) |
 | Frontend | React + Vite + TypeScript + Tailwind |
 | Email | Resend (email doğrulama + şifre sıfırlama linkleri için) |
