@@ -26,6 +26,11 @@ All defaults can be overridden with `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, and
 `CORS_ALLOWED_ORIGIN` environment variables. Production has no default database
 credentials or allowed origin.
 
+Auth and email delivery additionally require `JWT_SECRET`, `RESEND_API_KEY`,
+`RESEND_FROM_EMAIL`, and `FRONTEND_BASE_URL`. Optional lifetime settings are
+`JWT_ACCESS_EXPIRATION_MS`, `JWT_REFRESH_EXPIRATION_DAYS`, and
+`EMAIL_VERIFICATION_EXPIRATION_HOURS`.
+
 ## Tests
 
 ```bash

@@ -81,6 +81,7 @@ Staj projesindeki (`ecommerce-simulation-api`) git geçmişinden aynen taşınan
 | `CORS_ALLOWED_ORIGIN` | Frontend'in Vercel URL'i (yerelde `http://localhost:5173`) |
 | `COOKIE_SECURE` | Refresh token cookie'sinin `Secure` bayrağı — yerelde `false`, Railway'de `true` (varsayılan) |
 | `RESEND_API_KEY` | Doğrulama/şifre sıfırlama emaili göndermek için |
+| `RESEND_FROM_EMAIL` | Resend üzerinde doğrulanmış gönderici adresi |
 | `FRONTEND_BASE_URL` | Şifre sıfırlama linkinin işaret edeceği adres (örn. `https://app.domain.com/reset-password`) |
 
 **Frontend (Vercel'de tanımlanır):**
