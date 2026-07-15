@@ -7,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.*;
 public class WebConfig implements WebMvcConfigurer {
 	private final AuthRateLimitInterceptor interceptor;
 	@Override public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(interceptor).addPathPatterns("/api/auth/login", "/api/auth/register");
+		registry.addInterceptor(interceptor).addPathPatterns(
+				"/api/auth/login", "/api/auth/register", "/api/auth/forgot-password");
 	}
 }

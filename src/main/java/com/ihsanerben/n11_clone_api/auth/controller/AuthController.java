@@ -3,6 +3,7 @@ package com.ihsanerben.n11_clone_api.auth.controller;
 import com.ihsanerben.n11_clone_api.auth.config.AuthProperties;
 import com.ihsanerben.n11_clone_api.auth.dto.*;
 import com.ihsanerben.n11_clone_api.auth.service.AuthService;
+import com.ihsanerben.n11_clone_api.auth.service.PasswordResetService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -16,6 +17,7 @@ import java.time.Duration;
 @RestController @RequestMapping("/api/auth") @RequiredArgsConstructor @Tag(name = "Authentication")
 public class AuthController {
 	private final AuthService service;
+	private final PasswordResetService passwordResetService;
 	private final AuthProperties properties;
 
 	@PostMapping("/register") @ResponseStatus(HttpStatus.CREATED)
@@ -36,6 +38,20 @@ public class AuthController {
 	@PostMapping("/resend-verification")
 	@Operation(summary = "Replace and resend an email verification token")
 	public MessageResponse resend(@Valid @RequestBody ResendVerificationRequest request) { service.resendVerification(request.email()); return new MessageResponse("Verification email sent"); }
+
+	@PostMapping("/forgot-password")
+	@Operation(summary = "Send a password reset email if the account exists")
+	public MessageResponse forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+		passwordResetService.forgotPassword(request);
+		return new MessageResponse("If the email is registered, a password reset link has been sent");
+	}
+
+	@PostMapping("/reset-password")
+	@Operation(summary = "Reset a password with a valid single-use token")
+	public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+		passwordResetService.resetPassword(request);
+		return new MessageResponse("Password reset successful");
+	}
 
 	private ResponseEntity<TokenResponse> session(AuthService.Session session) {
 		ResponseCookie cookie = ResponseCookie.from(properties.refreshCookieName(), session.refreshToken()).httpOnly(true)

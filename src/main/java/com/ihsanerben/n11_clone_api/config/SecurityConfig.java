@@ -43,6 +43,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login", "/api/auth/refresh",
 								"/api/auth/logout", "/api/auth/verify-email", "/api/auth/resend-verification").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
 						.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 						.anyRequest().authenticated())
 				.build();

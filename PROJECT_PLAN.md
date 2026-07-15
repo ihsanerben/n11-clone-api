@@ -78,6 +78,7 @@ Staj projesindeki (`ecommerce-simulation-api`) git geçmişinden aynen taşınan
 | `JWT_SECRET` | Access token imzalama anahtarı — staj projesindeki gibi zorunlu, kodda default yok |
 | `JWT_ACCESS_EXPIRATION_MS` | Access token ömrü (örn. `1200000` = 20 dk) |
 | `JWT_REFRESH_EXPIRATION_DAYS` | Refresh token ömrü (örn. `14`) |
+| `PASSWORD_RESET_EXPIRATION_MINUTES` | Şifre sıfırlama token ömrü (varsayılan `60`) |
 | `CORS_ALLOWED_ORIGIN` | Frontend'in Vercel URL'i (yerelde `http://localhost:5173`) |
 | `COOKIE_SECURE` | Refresh token cookie'sinin `Secure` bayrağı — yerelde `false`, Railway'de `true` (varsayılan) |
 | `RESEND_API_KEY` | Doğrulama/şifre sıfırlama emaili göndermek için |
