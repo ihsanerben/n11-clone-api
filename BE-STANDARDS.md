@@ -30,7 +30,8 @@ Bu doküman, bu projenin backend'i için mimari kararları ve kodlama standartla
 
 ## 1. Mimari
 
-- **Katmanlı mimari:** Controller → Service → Repository → DB. Modüler monolith değil — tek modül, basit paket yapısı (staj projesindeki gibi).
+- **Feature bazlı paketlenmiş katmanlı monolith:** Tek Maven/Spring Boot modülü kullanılır. Üst seviye paketler iş özelliğine göre (`auth`, `user`, `product`, `order`), her feature'ın alt paketleri sorumluluğa göre (`controller`, `dto`, `service`, `repository`, `entity`, gerektiğinde `config`/`security`) ayrılır. Bu düzen modular monolith değildir; paket sınırları bağımsız modül API'leri olarak zorlanmaz.
+- Katman akışı Controller → Service → Repository → DB'dir. Aynı sorumluluğa sahip birden fazla sınıf tek bir toplama sınıfında (`AuthDtos` gibi) birleştirilmez; her DTO kendi Java `record` dosyasında tutulur.
 - Entity hiçbir zaman Controller sınırının dışına (request/response'a) sızmaz; yalnızca DTO'lar taşınır.
 - Entity ↔ DTO dönüşümü manuel Mapper sınıflarıyla yapılır (`ProductMapper`, `OrderMapper` deseni) — MapStruct kullanılmaz, gereksiz bir bağımlılık.
 - Katmanlar arası bağımlılık tek yönlü: Controller → Service → Repository. Controller'a iş mantığı yazılmaz.

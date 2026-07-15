@@ -16,6 +16,11 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	@ExceptionHandler(ApiException.class)
+	public org.springframework.http.ResponseEntity<ErrorResponse> handleApi(ApiException exception, HttpServletRequest request) {
+		return org.springframework.http.ResponseEntity.status(exception.getStatus())
+				.body(error(exception.getStatus(), exception.getMessage(), request, null));
+	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

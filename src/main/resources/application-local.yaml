@@ -7,3 +7,10 @@ spring:
 app:
   cors:
     allowed-origin: ${CORS_ALLOWED_ORIGIN:http://localhost:5173}
+  auth:
+    jwt-secret: ${JWT_SECRET:local-development-secret-must-be-at-least-32-characters}
+    cookie-secure: ${COOKIE_SECURE:false}
+  email:
+    api-key: ${RESEND_API_KEY:local-placeholder}
+    from: ${RESEND_FROM_EMAIL:dev@example.com}
+    frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:5173}
