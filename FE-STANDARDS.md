@@ -31,6 +31,11 @@ Bu doküman, bu projenin frontend'i için mimari kararları ve kodlama standartl
 - Vite + React + TypeScript, tek sayfa uygulaması (SPA), **tek repo/tek deploy**.
 - Admin paneli ve satıcı paneli **ayrı uygulamalar değil** — aynı app içinde role'e göre kapılı rota grupları (`/admin/*`, `/seller/*`, geri kalanı alıcı deneyimi).
 - Rota koruması yalnızca kullanıcı deneyimi içindir; **gerçek yetkilendirme her zaman backend'e aittir** — FE hiçbir zaman "yetkim var" varsayımıyla veri göstermez, her zaman API'nin 401/403 cevabına güvenir.
+- Okunabilirlik için her statement ayrı satırda tutulur; tek satıra sıkıştırılmış component, hook, event handler veya koşullu blok yazılmaz.
+- Wildcard/barrel importlar yalnızca açıkça yönetilen public export noktalarında kullanılabilir; uygulama kodunda bağımlılıklar açık isimlerle import edilir.
+- Uzun JSX prop'ları, Tailwind class listeleri, method chain'leri ve obje tanımları mantıksal parçalara bölünür. Tekrarlanan veya anlamı gizleyen ifadeler açıklayıcı isimli yardımcı fonksiyon/component/hook'lara çıkarılır.
+- Değişken, fonksiyon ve component adları sorumluluğu açıkça anlatır; `data`, `item`, `service`, `handle` gibi bağlamsız genel isimler tek başına kullanılmaz.
+- Bir dosya tek ana sorumluluğa sahip olur. Birden fazla bağımsız component, type veya API sözleşmesi okunabilirliği bozacak şekilde aynı dosyada toplanmaz.
 
 ## 2. State & Data Fetching
 
