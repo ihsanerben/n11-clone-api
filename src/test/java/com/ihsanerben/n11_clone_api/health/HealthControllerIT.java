@@ -64,6 +64,6 @@ class HealthControllerIT {
 				.query(Integer.class)
 				.single();
 
-		assertThat(appliedMigrations).isEqualTo(3);
+		assertThat(appliedMigrations).isEqualTo(4);
 	}
 }
