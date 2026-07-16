@@ -16,7 +16,12 @@ public class AuthRateLimitInterceptor implements HandlerInterceptor {
   @Override
   public boolean preHandle(
       HttpServletRequest request, HttpServletResponse response, Object handler) {
-    String key = request.getRemoteAddr() + ':' + request.getRequestURI();
+    if (request.getRequestURI().equals("/api/orders") && !request.getMethod().equals("POST")) {
+      return true;
+    }
+    String principal =
+        request.getUserPrincipal() == null ? "anonymous" : request.getUserPrincipal().getName();
+    String key = principal + ':' + request.getRemoteAddr() + ':' + request.getRequestURI();
     Bucket bucket =
         buckets.computeIfAbsent(
             key,
