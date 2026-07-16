@@ -7,5 +7,4 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableConfigurationProperties({CorsProperties.class, AuthProperties.class, EmailProperties.class})
-public class PropertiesConfig {
-}
+public class PropertiesConfig {}

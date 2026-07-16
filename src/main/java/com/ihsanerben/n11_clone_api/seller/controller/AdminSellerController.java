@@ -21,26 +21,24 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 public class AdminSellerController {
-	private final SellerService sellerService;
+  private final SellerService sellerService;
 
-	@GetMapping
-	@Operation(summary = "List seller applications")
-	public Page<SellerResponse> list(
-			@RequestParam(required = false) SellerStatus status,
-			@ParameterObject Pageable pageable
-	) {
-		return sellerService.list(status, pageable);
-	}
+  @GetMapping
+  @Operation(summary = "List seller applications")
+  public Page<SellerResponse> list(
+      @RequestParam(required = false) SellerStatus status, @ParameterObject Pageable pageable) {
+    return sellerService.list(status, pageable);
+  }
 
-	@PutMapping("/{sellerId}/approve")
-	@Operation(summary = "Approve a pending seller application")
-	public SellerResponse approve(@PathVariable Long sellerId) {
-		return sellerService.approve(sellerId);
-	}
+  @PutMapping("/{sellerId}/approve")
+  @Operation(summary = "Approve a pending seller application")
+  public SellerResponse approve(@PathVariable Long sellerId) {
+    return sellerService.approve(sellerId);
+  }
 
-	@PutMapping("/{sellerId}/reject")
-	@Operation(summary = "Reject a pending seller application")
-	public SellerResponse reject(@PathVariable Long sellerId) {
-		return sellerService.reject(sellerId);
-	}
+  @PutMapping("/{sellerId}/reject")
+  @Operation(summary = "Reject a pending seller application")
+  public SellerResponse reject(@PathVariable Long sellerId) {
+    return sellerService.reject(sellerId);
+  }
 }

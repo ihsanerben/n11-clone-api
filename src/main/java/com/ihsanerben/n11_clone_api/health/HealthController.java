@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/health")
 public class HealthController {
 
-	@GetMapping
-	@Operation(summary = "Check API health")
-	@ApiResponse(responseCode = "200", description = "API is running")
-	public HealthResponse health() {
-		return new HealthResponse("UP");
-	}
+  @GetMapping
+  @Operation(summary = "Check API health")
+  @ApiResponse(responseCode = "200", description = "API is running")
+  public HealthResponse health() {
+    return new HealthResponse("UP");
+  }
 }
