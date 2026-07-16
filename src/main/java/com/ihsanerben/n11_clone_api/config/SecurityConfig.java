@@ -1,5 +1,7 @@
 package com.ihsanerben.n11_clone_api.config;
 
+import com.ihsanerben.n11_clone_api.auth.config.AuthProperties;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,10 +22,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
 import javax.crypto.spec.SecretKeySpec;
-import com.ihsanerben.n11_clone_api.auth.config.AuthProperties;
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
@@ -49,15 +53,32 @@ public class SecurityConfig {
 				.build();
 	}
 
-	@Bean PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
-	@Bean JwtEncoder jwtEncoder() { return new NimbusJwtEncoder(new ImmutableSecret<>(authProperties.jwtSecret().getBytes(java.nio.charset.StandardCharsets.UTF_8))); }
-	@Bean JwtDecoder jwtDecoder() {
-		return NimbusJwtDecoder.withSecretKey(new SecretKeySpec(authProperties.jwtSecret().getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256")).build();
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
 	}
+
+	@Bean
+	JwtEncoder jwtEncoder() {
+		byte[] secret = authProperties.jwtSecret().getBytes(StandardCharsets.UTF_8);
+		return new NimbusJwtEncoder(new ImmutableSecret<>(secret));
+	}
+
+	@Bean
+	JwtDecoder jwtDecoder() {
+		byte[] secret = authProperties.jwtSecret().getBytes(StandardCharsets.UTF_8);
+		SecretKeySpec secretKey = new SecretKeySpec(secret, "HmacSHA256");
+		return NimbusJwtDecoder.withSecretKey(secretKey).build();
+	}
+
 	private JwtAuthenticationConverter jwtAuthenticationConverter() {
 		JwtGrantedAuthoritiesConverter authorities = new JwtGrantedAuthoritiesConverter();
-		authorities.setAuthoritiesClaimName("roles"); authorities.setAuthorityPrefix("ROLE_");
-		JwtAuthenticationConverter converter = new JwtAuthenticationConverter(); converter.setJwtGrantedAuthoritiesConverter(authorities); return converter;
+		authorities.setAuthoritiesClaimName("roles");
+		authorities.setAuthorityPrefix("ROLE_");
+
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+		converter.setJwtGrantedAuthoritiesConverter(authorities);
+		return converter;
 	}
 
 	@Bean

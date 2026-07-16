@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 public interface EmailVerificationTokenRepository extends JpaRepository<EmailVerificationToken, Long> {
 	Optional<EmailVerificationToken> findByTokenHash(String tokenHash);
-	@Modifying @Query("update EmailVerificationToken t set t.used = true where t.user.id = :userId and t.used = false")
+	@Modifying
+	@Query("update EmailVerificationToken t set t.used = true where t.user.id = :userId and t.used = false")
 	void invalidateAllForUser(Long userId);
 }

@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import java.util.Map;
 
-@Service @RequiredArgsConstructor
+@Service
+@RequiredArgsConstructor
 public class ResendEmailService {
 	private final EmailProperties properties;
 

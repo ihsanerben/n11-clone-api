@@ -61,6 +61,8 @@ Bu doküman, bu projenin backend'i için mimari kararları ve kodlama standartla
 - **Entity:** `@Getter`/`@Setter`/`@Builder` kullanılır; `@Data` yasak (equals/hashCode ve mutability sorunları).
 - **DTO:** Java `record` — immutable, boilerplate'siz.
 - **Validasyon:** Format kontrolleri (`@NotBlank`, `@Email`, `@Positive` vb.) DTO üzerinde + `@Valid`; iş kuralları Service katmanında.
+- Okunabilirlik için sınıf/metot annotation'ları ayrı satırlarda, her statement ayrı satırda tutulur; tek satırlık sıkıştırılmış metotlar ve aynı satırda birden fazla iş yapan ifadeler kullanılmaz.
+- Wildcard import (`import ...*`) kullanılmaz. Builder zincirleri ve uzun fluent API çağrıları mantıksal adımlara göre satırlara bölünür.
 
 ## 5. API & Controller Standartları
 

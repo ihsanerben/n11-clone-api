@@ -3,7 +3,8 @@ import com.ihsanerben.n11_clone_api.auth.security.AuthRateLimitInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
-@Configuration @RequiredArgsConstructor
+@Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 	private final AuthRateLimitInterceptor interceptor;
 	@Override public void addInterceptors(InterceptorRegistry registry) {
