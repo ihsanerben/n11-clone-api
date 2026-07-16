@@ -100,11 +100,17 @@ public class ProductService {
         (root, q, cb) -> {
           var predicates = new ArrayList<Predicate>();
           predicates.add(cb.isTrue(root.get("active")));
-          if (search != null && !search.isBlank())
+          if (search != null && !search.isBlank()) {
+            String term = "%" + search.trim().toLowerCase() + "%";
             predicates.add(
-                cb.like(cb.lower(root.get("name")), "%" + search.trim().toLowerCase() + "%"));
-          if (categoryId != null)
+                cb.or(
+                    cb.like(cb.lower(root.get("name")), term),
+                    cb.like(cb.lower(root.get("description")), term),
+                    cb.like(cb.lower(root.get("category").get("name")), term)));
+          }
+          if (categoryId != null) {
             predicates.add(cb.equal(root.get("category").get("id"), categoryId));
+          }
           return cb.and(predicates.toArray(Predicate[]::new));
         };
     return products.findAll(spec, pageable).map(mapper::toResponse);
