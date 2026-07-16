@@ -63,4 +63,8 @@ public class Order {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
+
+  public void changeStatus(OrderStatus newStatus) {
+    status = newStatus;
+  }
 }
