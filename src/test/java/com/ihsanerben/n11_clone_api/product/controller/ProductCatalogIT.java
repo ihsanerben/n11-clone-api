@@ -106,6 +106,12 @@ class ProductCatalogIT {
     mvc.perform(get("/api/products?search=phone&categoryId=" + categoryId))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.content[0].id").value(productId));
+    mvc.perform(get("/api/products?search=smart"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content[0].id").value(productId));
+    mvc.perform(get("/api/products?search=electronics"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content[0].id").value(productId));
     mvc.perform(
             put("/api/seller/products/{id}", productId)
                 .header("Authorization", "Bearer " + otherToken)
