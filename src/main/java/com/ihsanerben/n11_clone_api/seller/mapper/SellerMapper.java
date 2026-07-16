@@ -6,17 +6,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SellerMapper {
-	public SellerResponse toResponse(Seller seller) {
-		return new SellerResponse(
-				seller.getId(),
-				seller.getUser().getId(),
-				seller.getUser().getUsername(),
-				seller.getUser().getEmail(),
-				seller.getStoreName(),
-				seller.getDescription(),
-				seller.getStatus(),
-				seller.getAppliedAt(),
-				seller.getReviewedAt()
-		);
-	}
+  public SellerResponse toResponse(Seller seller) {
+    return new SellerResponse(
+        seller.getId(),
+        seller.getUser().getId(),
+        seller.getUser().getUsername(),
+        seller.getUser().getEmail(),
+        seller.getStoreName(),
+        seller.getDescription(),
+        seller.getStatus(),
+        seller.getAppliedAt(),
+        seller.getReviewedAt());
+  }
 }

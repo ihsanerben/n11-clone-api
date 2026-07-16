@@ -7,11 +7,10 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "app.auth")
 public record AuthProperties(
-		@NotBlank @Size(min = 32) String jwtSecret,
-		@Positive long accessExpirationMs,
-		@Positive long refreshExpirationDays,
-		@Positive long verificationExpirationHours,
-		@Positive long passwordResetExpirationMinutes,
-		@NotBlank String refreshCookieName,
-		boolean cookieSecure
-) {}
+    @NotBlank @Size(min = 32) String jwtSecret,
+    @Positive long accessExpirationMs,
+    @Positive long refreshExpirationDays,
+    @Positive long verificationExpirationHours,
+    @Positive long passwordResetExpirationMinutes,
+    @NotBlank String refreshCookieName,
+    boolean cookieSecure) {}

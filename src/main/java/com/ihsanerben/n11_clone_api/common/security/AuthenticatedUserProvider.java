@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticatedUserProvider {
-	public Long userId() {
-		JwtAuthenticationToken authentication =
-				(JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-		Number userId = authentication.getToken().getClaim("userId");
-		return userId.longValue();
-	}
+  public Long userId() {
+    JwtAuthenticationToken authentication =
+        (JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+    Number userId = authentication.getToken().getClaim("userId");
+    return userId.longValue();
+  }
 }

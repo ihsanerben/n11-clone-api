@@ -6,5 +6,4 @@ import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "app.cors")
-public record CorsProperties(@NotBlank String allowedOrigin) {
-}
+public record CorsProperties(@NotBlank String allowedOrigin) {}

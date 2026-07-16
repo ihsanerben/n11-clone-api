@@ -19,20 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/sellers")
 @RequiredArgsConstructor
 public class SellerController {
-	private final SellerService sellerService;
+  private final SellerService sellerService;
 
-	@PostMapping("/apply")
-	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("hasRole('USER')")
-	@Operation(summary = "Apply to become a seller or resubmit a rejected application")
-	public SellerResponse apply(@Valid @RequestBody SellerApplicationRequest request) {
-		return sellerService.apply(request);
-	}
+  @PostMapping("/apply")
+  @ResponseStatus(HttpStatus.CREATED)
+  @PreAuthorize("hasRole('USER')")
+  @Operation(summary = "Apply to become a seller or resubmit a rejected application")
+  public SellerResponse apply(@Valid @RequestBody SellerApplicationRequest request) {
+    return sellerService.apply(request);
+  }
 
-	@GetMapping("/me")
-	@PreAuthorize("hasAnyRole('USER', 'SELLER')")
-	@Operation(summary = "Get the current user's seller application")
-	public SellerResponse getMyApplication() {
-		return sellerService.getMyApplication();
-	}
+  @GetMapping("/me")
+  @PreAuthorize("hasAnyRole('USER', 'SELLER')")
+  @Operation(summary = "Get the current user's seller application")
+  public SellerResponse getMyApplication() {
+    return sellerService.getMyApplication();
+  }
 }
