@@ -80,6 +80,8 @@ Backend ile aynı desen (bkz. `PROJECT_PLAN.md` "Git & Deploy Workflow"):
 - Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
 - `main`'den `feature/<isim>` branch'i, PR ile merge.
 - CI (`npm run build` + lint) yeşil olmadan PR merge edilmez.
+- AI bir haftalık frontend dilimini tamamladığında son teslim mesajında mutlaka şu dört bilgiyi açıkça yazar: **tamamlanan hafta numarası ve başlığı**, **tamamlanan branch adı**, **sıradaki hafta numarası ve başlığı**, **açılacak yeni branch adı**.
+- Yeni haftaya, mevcut haftanın branch'i `main`'e merge edildikten ve yeni branch güncel `main` üzerinden açıldıktan sonra başlanır.
 
 ## 10. Anti-Pattern Referans Tablosu
 

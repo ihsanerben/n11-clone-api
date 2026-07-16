@@ -3,6 +3,7 @@ package com.ihsanerben.n11_clone_api.common.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,6 +17,15 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ErrorResponse handleAuthorizationDenied(
+			AuthorizationDeniedException exception,
+			HttpServletRequest request
+	) {
+		return error(HttpStatus.FORBIDDEN, "Access denied", request, null);
+	}
+
 	@ExceptionHandler(ApiException.class)
 	public org.springframework.http.ResponseEntity<ErrorResponse> handleApi(ApiException exception, HttpServletRequest request) {
 		return org.springframework.http.ResponseEntity.status(exception.getStatus())

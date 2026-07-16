@@ -122,6 +122,9 @@ Yalnızca **header manipülasyonu gerektiğinde** kullanılır — bu projede en
 
 Bu proje Claude ile birlikte geliştiriliyor. Backend kodu yazılırken bu dokümana ve `PROJECT_PLAN.md`'ye (özellikle Security, Exception Handling, Transaction Yönetimi bölümlerine) uyulması beklenir.
 
+- AI roadmap'te hafta hafta ilerler. Bir haftanın geliştirme ve doğrulaması tamamlandığında son teslim mesajında mutlaka şu dört bilgiyi açıkça yazar: **tamamlanan hafta numarası ve başlığı**, **tamamlanan branch adı**, **sıradaki hafta numarası ve başlığı**, **açılacak yeni branch adı**.
+- Yeni haftanın geliştirmesine, önceki hafta `main`'e merge edildikten ve kullanıcı yeni branch'i güncel `main` üzerinden açtığını doğruladıktan sonra başlanır.
+
 ## 12. Anti-Pattern Referans Tablosu
 
 | ❌ Yanlış | ✅ Doğru |
