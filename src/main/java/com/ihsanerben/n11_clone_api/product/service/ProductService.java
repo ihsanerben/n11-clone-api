@@ -96,24 +96,45 @@ public class ProductService {
 
   @Transactional(readOnly = true)
   public Page<ProductResponse> list(String search, Long categoryId, Pageable pageable) {
-    Specification<Product> spec =
-        (root, q, cb) -> {
-          var predicates = new ArrayList<Predicate>();
-          predicates.add(cb.isTrue(root.get("active")));
-          if (search != null && !search.isBlank()) {
-            String term = "%" + search.trim().toLowerCase() + "%";
-            predicates.add(
-                cb.or(
-                    cb.like(cb.lower(root.get("name")), term),
-                    cb.like(cb.lower(root.get("description")), term),
-                    cb.like(cb.lower(root.get("category").get("name")), term)));
-          }
-          if (categoryId != null) {
-            predicates.add(cb.equal(root.get("category").get("id"), categoryId));
-          }
-          return cb.and(predicates.toArray(Predicate[]::new));
-        };
-    return products.findAll(spec, pageable).map(mapper::toResponse);
+    return products
+        .findAll(specification(search, categoryId, true), pageable)
+        .map(mapper::toResponse);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ProductResponse> listOwned(Pageable pageable) {
+    return products
+        .findAllBySellerUserId(authenticatedUser.userId(), pageable)
+        .map(mapper::toResponse);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<ProductResponse> listAdmin(
+      String search, Long categoryId, Boolean active, Pageable pageable) {
+    return products
+        .findAll(specification(search, categoryId, active), pageable)
+        .map(mapper::toResponse);
+  }
+
+  private Specification<Product> specification(String search, Long categoryId, Boolean active) {
+    return (root, q, cb) -> {
+      var predicates = new ArrayList<Predicate>();
+      if (active != null) {
+        predicates.add(cb.equal(root.get("active"), active));
+      }
+      if (search != null && !search.isBlank()) {
+        String term = "%" + search.trim().toLowerCase() + "%";
+        predicates.add(
+            cb.or(
+                cb.like(cb.lower(root.get("name")), term),
+                cb.like(cb.lower(root.get("description")), term),
+                cb.like(cb.lower(root.get("category").get("name")), term)));
+      }
+      if (categoryId != null) {
+        predicates.add(cb.equal(root.get("category").get("id"), categoryId));
+      }
+      return cb.and(predicates.toArray(Predicate[]::new));
+    };
   }
 
   private Product owned(Long id) {

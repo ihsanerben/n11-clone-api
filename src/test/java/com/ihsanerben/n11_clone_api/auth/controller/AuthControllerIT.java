@@ -1,15 +1,18 @@
 package com.ihsanerben.n11_clone_api.auth.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.ihsanerben.n11_clone_api.auth.service.ResendEmailService;
-import com.ihsanerben.n11_clone_api.user.entity.*;
+import com.ihsanerben.n11_clone_api.user.entity.User;
+import com.ihsanerben.n11_clone_api.user.entity.UserRole;
 import com.ihsanerben.n11_clone_api.user.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
@@ -20,8 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.*;
-import org.testcontainers.junit.jupiter.*;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 @Testcontainers
@@ -87,8 +92,23 @@ class AuthControllerIT {
                     .content("{\"usernameOrEmail\":\"ihsan\",\"password\":\"StrongPass1\"}"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.accessToken").isNotEmpty())
+            .andExpect(jsonPath("$.refreshToken").doesNotExist())
             .andExpect(
                 header().string("Set-Cookie", org.hamcrest.Matchers.containsString("HttpOnly")))
+            .andExpect(
+                header().string("Set-Cookie", org.hamcrest.Matchers.containsString("SameSite=Lax")))
+            .andExpect(
+                header()
+                    .string("Set-Cookie", org.hamcrest.Matchers.containsString("Path=/api/auth")))
+            .andExpect(
+                header()
+                    .string("Set-Cookie", org.hamcrest.Matchers.containsString("Max-Age=1209600")))
+            .andExpect(
+                header()
+                    .string(
+                        "Set-Cookie",
+                        org.hamcrest.Matchers.not(
+                            org.hamcrest.Matchers.containsString("; Secure"))))
             .andReturn();
     Cookie first = login.getResponse().getCookie("refreshToken");
     assertThat(first).isNotNull();
@@ -97,6 +117,9 @@ class AuthControllerIT {
         mockMvc
             .perform(post("/api/auth/refresh").cookie(first))
             .andExpect(status().isOk())
+            .andExpect(jsonPath("$.refreshToken").doesNotExist())
+            .andExpect(
+                header().string("Set-Cookie", org.hamcrest.Matchers.containsString("SameSite=Lax")))
             .andReturn();
     Cookie second = refreshed.getResponse().getCookie("refreshToken");
     assertThat(second).isNotNull();
@@ -105,8 +128,16 @@ class AuthControllerIT {
     mockMvc
         .perform(post("/api/auth/logout").cookie(second))
         .andExpect(status().isNoContent())
+        .andExpect(header().string("Set-Cookie", org.hamcrest.Matchers.containsString("Max-Age=0")))
         .andExpect(
-            header().string("Set-Cookie", org.hamcrest.Matchers.containsString("Max-Age=0")));
+            header().string("Set-Cookie", org.hamcrest.Matchers.containsString("Path=/api/auth")))
+        .andExpect(
+            header().string("Set-Cookie", org.hamcrest.Matchers.containsString("SameSite=Lax")))
+        .andExpect(
+            header()
+                .string(
+                    "Set-Cookie",
+                    org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("; Secure"))));
     mockMvc.perform(post("/api/auth/refresh").cookie(second)).andExpect(status().isUnauthorized());
   }
 

@@ -120,7 +120,7 @@ public class AuthController {
     return ResponseCookie.from(properties.refreshCookieName(), value)
         .httpOnly(true)
         .secure(properties.cookieSecure())
-        .sameSite("None")
+        .sameSite(properties.cookieSecure() ? "None" : "Lax")
         .path(REFRESH_COOKIE_PATH);
   }
 
