@@ -97,9 +97,9 @@ Staj projesindeki (`ecommerce-simulation-api`) git geçmişinden aynen taşınan
 ### 4.1 Auth ve Oturum
 
 - **Access token:** Kısa ömürlü (öneri: **20 dk**, `JWT_ACCESS_EXPIRATION_MS`), login/refresh response'unun **JSON gövdesinde** döner, frontend'de yalnızca memory'de tutulur, `Authorization: Bearer` header ile API isteklerine eklenir. localStorage kullanılmaz (XSS'e karşı).
-- **Refresh token — httpOnly Secure cookie (sektör standardı):** Access token'ın aksine JSON gövdesinde hiç dönmez; backend, login/refresh response'unda `Set-Cookie: refreshToken=...; HttpOnly; Secure; SameSite=None; Path=/api/auth` header'ıyla tarayıcıya yazdırır. JS bu cookie'yi hiç okuyamaz (XSS'e karşı en güçlü koruma), tarayıcı otomatik gönderir. DB'de de (`refresh_tokens` tablosu) ayrıca saklanır — uzun ömürlü (öneri: **14 gün**, `JWT_REFRESH_EXPIRATION_DAYS`), rotation ve revoke için.
+- **Refresh token — httpOnly cookie (sektör standardı):** Access token'ın aksine JSON gövdesinde hiç dönmez. Production'da backend `Set-Cookie: refreshToken=...; HttpOnly; Secure; SameSite=None; Path=/api/auth` header'ını kullanır; localhost'ta ise tarayıcı uyumluluğu için `Secure=false; SameSite=Lax` uygular. JS bu cookie'yi hiç okuyamaz (XSS'e karşı en güçlü koruma), tarayıcı otomatik gönderir. DB'de de (`refresh_tokens` tablosu) ayrıca saklanır — uzun ömürlü (öneri: **14 gün**, `JWT_REFRESH_EXPIRATION_DAYS`), rotation ve revoke için.
   - **Cross-site detayı:** Backend (Railway) ve frontend (Vercel) farklı domain'lerde olduğu için `SameSite=None` zorunlu (aksi halde tarayıcı cookie'yi cross-site isteklerde göndermez). Bunun çalışması için: (1) `Secure` şart (yalnızca HTTPS — Railway/Vercel zaten HTTPS), (2) backend CORS config'i `Access-Control-Allow-Credentials: true` döndürmeli ve origin'i `*` değil **tam olarak** frontend'in Vercel URL'i olmalı (zaten `CORS_ALLOWED_ORIGIN` ile böyle), (3) frontend'deki her `fetch`/axios isteği `credentials: 'include'` ile gitmeli. Custom domain eklenip FE/BE aynı kök domain'in alt domain'i olduğunda (backlog, §8) `SameSite=None` yerine daha sıkı `SameSite=Lax`'e geçilebilir — zorunlu değil, iyileştirme.
-  - **Yerel geliştirme sorunu:** `Secure` cookie yalnızca HTTPS üzerinden gönderilir; `localhost` HTTP olduğu için normal şartlarda yerelde refresh cookie'si hiç çalışmaz. Çözüm: bir `local` Spring profile'ında `app.cookie.secure=false` (prod'da `true`) — yalnızca bu bayrak ortama göre değişir, iş mantığı aynı kalır. Bu yüzden yeni bir env var daha var: `COOKIE_SECURE` (local'de `false`, Railway'de `true`/varsayılan).
+  - **Yerel geliştirme:** `COOKIE_SECURE=false` olduğunda cookie `Secure=false, SameSite=Lax`; Railway'de `COOKIE_SECURE=true` olduğunda `Secure=true, SameSite=None` olur. Böylece localhost HTTP üzerinde `SameSite=None` cookie'nin tarayıcı tarafından reddedilmesi önlenir.
 - **Rotation:** Her `/api/auth/refresh` çağrısında DB'deki eski refresh token satırı geçersiz kılınır, yenisi üretilip hem DB'ye yazılır hem yeni cookie olarak set edilir — çalınan bir refresh token'ın tekrar tekrar kullanılmasını (replay) önler.
 - **Gerçek logout:** `/api/auth/logout` hem DB'deki refresh token'ı `revoked=true` yapar hem cookie'yi `Max-Age=0` ile temizler.
 - **Yan fayda:** Access token kısa ömürlü olduğu için rol değişiklikleri (örn. satıcı onayı) en geç bir sonraki refresh'te (~20 dk içinde) otomatik yansır, kullanıcı elle tekrar login olmak zorunda kalmaz. Sayfa yenilendiğinde (F5) access token memory'den silinir ama refresh cookie'si tarayıcıda kalır — FE açılışta sessizce `/api/auth/refresh` çağırıp yeni bir access token alır, kullanıcı oturumda kalmaya devam eder.
@@ -207,10 +207,12 @@ Bir kullanıcının satıcı-ilişkili ekranlarda görebileceği 4 durum vardır
 |---|---|---|---|
 | GET | `/api/products` | Herkes | Sayfalama+filtre+arama, yalnızca `is_active=true` |
 | GET | `/api/products/{id}` | Herkes | Detay |
+| GET | `/api/seller/products` | SELLER | Giriş yapan satıcının aktif/pasif tüm ürünleri; `Pageable`, varsayılan `createdAt,desc` |
 | POST | `/api/seller/products` | SELLER | Ürün ekler (sellerId otomatik atanır) |
 | PUT/DELETE | `/api/seller/products/{id}` | SELLER (kendi ürünü) | DELETE = soft delete |
 | PUT | `/api/seller/products/{id}/reactivate` | SELLER (kendi ürünü) | Yanlışlıkla silineni geri getirir (`is_active=true`) |
 | PUT | `/api/admin/products/{id}/deactivate` | ADMIN | Moderasyon |
+| GET | `/api/admin/products` | ADMIN | Aktif/pasif tüm ürünler; `active`, `search`, `categoryId` filtreleri + `Pageable` |
 
 ### Adres
 | Method | Endpoint | Yetki | Açıklama |
@@ -282,7 +284,7 @@ Aşağıda her haftanın tam kırılımı var: backend görevleri, frontend gör
 - `POST /api/auth/register` — kullanıcı `email_verified=false` ile oluşturulur, doğrulama linki mail atılır
 - `POST /api/auth/verify-email` — token doğrulanır, `email_verified=true` yapılır
 - `POST /api/auth/resend-verification` — eski doğrulama token'ı geçersiz kılınır, yenisi mail atılır
-- `POST /api/auth/login` — `email_verified=false` ise reddedilir; başarılıysa access token JSON gövdesinde, refresh token **httpOnly Secure SameSite=None cookie** olarak döner
+- `POST /api/auth/login` — `email_verified=false` ise reddedilir; başarılıysa access token JSON gövdesinde, refresh token production'da **httpOnly Secure SameSite=None**, localhost'ta **httpOnly SameSite=Lax** cookie olarak döner
 - `POST /api/auth/refresh` — cookie'deki refresh token doğrulanır, DB'de **eskisi geçersiz kılınıp yenisi verilir** (rotation), yeni access token JSON'da, yeni refresh cookie olarak set edilir
 - `POST /api/auth/logout` — refresh token DB'de `revoked=true` yapılır + cookie temizlenir
 - BCrypt ile şifre hash'leme
@@ -411,7 +413,7 @@ Staj projesindeki (`ecommerce-simulation-api`) alışkanlık burada da devam ede
 ## 8. Backlog (Kapsam Dışı, İleride Gerekirse Eklenir)
 
 - Redis cache (ürün/kategori listeleme)
-- Custom domain (FE/BE aynı kök domain'in alt domain'i olunca refresh cookie'sini `SameSite=None`'dan `SameSite=Lax`'e geçirmek için — cookie'nin kendisi zaten Hafta 2'de var, bu yalnızca bir iyileştirme)
+- Custom domain (FE/BE aynı kök domain'in alt domain'lerine taşınırsa production cookie politikasını daha sıkı `SameSite=Lax` yapabilme iyileştirmesi)
 - Genel güvenlik taraması / hardening turu
 - Staging ortamı
 - Spring Boot Actuator (health/metrics)

@@ -157,6 +157,71 @@ class ProductCatalogIT {
         .isInstanceOf(ObjectOptimisticLockingFailureException.class);
   }
 
+  @Test
+  void shouldExposeRoleScopedSellerAndAdminProductListings() throws Exception {
+    User sellerUser = user("listing-seller", UserRole.SELLER);
+    User otherSellerUser = user("listing-other-seller", UserRole.SELLER);
+    User regularUser = user("listing-user", UserRole.USER);
+    User admin = user("listing-admin", UserRole.ADMIN);
+    Seller seller = seller(sellerUser, "Listing Store");
+    Seller otherSeller = seller(otherSellerUser, "Other Listing Store");
+    Category category =
+        categories.saveAndFlush(Category.builder().name("Listing Category").build());
+    Instant base = Instant.now();
+    Product active =
+        product("IntegrationPhone Active", seller, category, true, base.minusSeconds(10));
+    Product inactive = product("IntegrationPhone Inactive", seller, category, false, base);
+    product("IntegrationPhone Other", otherSeller, category, true, base.plusSeconds(10));
+    String sellerToken = tokens.createAccessToken(sellerUser);
+    String regularToken = tokens.createAccessToken(regularUser);
+    String adminToken = tokens.createAccessToken(admin);
+
+    mvc.perform(get("/api/seller/products?page=0&size=20&sort=createdAt,desc"))
+        .andExpect(status().isUnauthorized());
+    mvc.perform(get("/api/seller/products").header("Authorization", "Bearer " + regularToken))
+        .andExpect(status().isForbidden());
+    mvc.perform(
+            get("/api/seller/products?page=0&size=20&sort=createdAt,desc")
+                .header("Authorization", "Bearer " + sellerToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(jsonPath("$.content[0].id").value(inactive.getId()))
+        .andExpect(jsonPath("$.content[0].active").value(false))
+        .andExpect(jsonPath("$.content[1].id").value(active.getId()))
+        .andExpect(jsonPath("$.content[1].active").value(true));
+
+    mvc.perform(get("/api/admin/products").header("Authorization", "Bearer " + sellerToken))
+        .andExpect(status().isForbidden());
+    mvc.perform(
+            get("/api/admin/products?active=false&search=integrationphone&categoryId="
+                    + category.getId())
+                .header("Authorization", "Bearer " + adminToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()").value(1))
+        .andExpect(jsonPath("$.content[0].id").value(inactive.getId()));
+    mvc.perform(
+            get("/api/admin/products?search=integrationphone&categoryId=" + category.getId())
+                .header("Authorization", "Bearer " + adminToken))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.content.length()").value(3));
+  }
+
+  private Product product(
+      String name, Seller seller, Category category, boolean active, Instant createdAt) {
+    return products.saveAndFlush(
+        Product.builder()
+            .seller(seller)
+            .category(category)
+            .name(name)
+            .description("Frontend integration product")
+            .price(BigDecimal.TEN)
+            .stockQuantity(5)
+            .active(active)
+            .createdAt(createdAt)
+            .updatedAt(createdAt)
+            .build());
+  }
+
   private User user(String name, UserRole role) {
     return users.saveAndFlush(
         User.builder()

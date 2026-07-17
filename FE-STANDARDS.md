@@ -49,6 +49,9 @@ Bu doküman, bu projenin frontend'i için mimari kararları ve kodlama standartl
 - Her istek `credentials: 'include'` ile gider (refresh cookie'sinin gönderilebilmesi için — bkz. `BE-STANDARDS.md` §3).
 - Uygulama açılışında sessizce `/api/auth/refresh` denenir — kullanıcı sayfa yenilendiğinde (F5) oturumda kalır.
 - 401 alan bir istekte otomatik olarak bir kez refresh denenir, başarılıysa orijinal istek tekrarlanır; başarısızsa kullanıcı login'e yönlendirilir (sonsuz döngüye girilmez).
+- Refresh cookie production'da `Secure=true, SameSite=None`, localhost'ta `Secure=false, SameSite=Lax` olarak backend tarafından yönetilir; frontend her iki ortamda da cookie'yi okumaz ve `credentials: 'include'` kullanır.
+- “Ürünlerim” verisi `GET /api/seller/products?page=0&size=20&sort=createdAt,desc` ile alınır; response `Page<ProductResponse>` biçimindedir ve aktif/pasif ürünleri birlikte içerir.
+- Admin ürün moderasyonu `GET /api/admin/products?active=false&search=phone&categoryId=1&page=0&size=20&sort=createdAt,desc` sözleşmesini kullanır; `active` verilmezse tüm ürünler döner.
 
 ## 4. Routing
 
