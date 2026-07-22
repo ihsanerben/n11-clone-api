@@ -1,5 +1,6 @@
 package com.ihsanerben.n11_clone_api.common.exception;
 
+import com.ihsanerben.n11_clone_api.auth.service.EmailDeliveryException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -17,6 +18,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+  @ExceptionHandler(EmailDeliveryException.class)
+  @ResponseStatus(HttpStatus.BAD_GATEWAY)
+  public ErrorResponse handleEmailDelivery(
+      EmailDeliveryException exception, HttpServletRequest request) {
+    log.error("Email delivery failed while processing path={}", request.getRequestURI(), exception);
+    return error(
+        HttpStatus.BAD_GATEWAY,
+        "Email could not be delivered. Please try again later",
+        request,
+        null);
+  }
+
   @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
   @ResponseStatus(HttpStatus.CONFLICT)
   public ErrorResponse handleOptimisticLocking(

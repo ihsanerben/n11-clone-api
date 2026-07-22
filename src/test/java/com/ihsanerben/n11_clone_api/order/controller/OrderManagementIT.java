@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.ihsanerben.n11_clone_api.address.entity.Address;
 import com.ihsanerben.n11_clone_api.address.repository.AddressRepository;
-import com.ihsanerben.n11_clone_api.auth.service.ResendEmailService;
+import com.ihsanerben.n11_clone_api.auth.service.EmailService;
 import com.ihsanerben.n11_clone_api.auth.service.TokenService;
 import com.ihsanerben.n11_clone_api.category.entity.Category;
 import com.ihsanerben.n11_clone_api.category.repository.CategoryRepository;
@@ -61,7 +61,6 @@ class OrderManagementIT {
     registry.add("app.auth.password-reset-expiration-minutes", () -> "60");
     registry.add("app.auth.refresh-cookie-name", () -> "refreshToken");
     registry.add("app.auth.cookie-secure", () -> "false");
-    registry.add("app.email.api-key", () -> "test");
     registry.add("app.email.from", () -> "test@example.com");
     registry.add("app.email.frontend-base-url", () -> "http://localhost:5173");
   }
@@ -75,7 +74,7 @@ class OrderManagementIT {
   @Autowired OrderRepository orders;
   @Autowired OrderItemRepository orderItems;
   @Autowired TokenService tokens;
-  @MockitoBean ResendEmailService email;
+  @MockitoBean EmailService email;
 
   @Test
   void buyerShouldSeeOnlyOwnOrdersAndCancelEligibleOrder() throws Exception {

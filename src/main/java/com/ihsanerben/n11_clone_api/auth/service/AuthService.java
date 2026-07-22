@@ -27,7 +27,7 @@ public class AuthService {
   private final EmailVerificationTokenRepository verificationTokens;
   private final PasswordEncoder passwordEncoder;
   private final TokenService tokenService;
-  private final ResendEmailService emailService;
+  private final EmailService emailService;
   private final AuthProperties properties;
 
   @Transactional

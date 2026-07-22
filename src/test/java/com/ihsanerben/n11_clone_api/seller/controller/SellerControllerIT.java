@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ihsanerben.n11_clone_api.auth.service.ResendEmailService;
+import com.ihsanerben.n11_clone_api.auth.service.EmailService;
 import com.ihsanerben.n11_clone_api.auth.service.TokenService;
 import com.ihsanerben.n11_clone_api.seller.repository.SellerRepository;
 import com.ihsanerben.n11_clone_api.user.entity.User;
@@ -48,7 +48,6 @@ class SellerControllerIT {
     registry.add("app.auth.password-reset-expiration-minutes", () -> "60");
     registry.add("app.auth.refresh-cookie-name", () -> "refreshToken");
     registry.add("app.auth.cookie-secure", () -> "false");
-    registry.add("app.email.api-key", () -> "test-key");
     registry.add("app.email.from", () -> "test@example.com");
     registry.add("app.email.frontend-base-url", () -> "http://localhost:5173");
   }
@@ -57,7 +56,7 @@ class SellerControllerIT {
   @Autowired UserRepository users;
   @Autowired SellerRepository sellers;
   @Autowired TokenService tokenService;
-  @MockitoBean ResendEmailService emailService;
+  @MockitoBean EmailService emailService;
 
   @Test
   void shouldApplyApproveAndEnforceRoleBoundaries() throws Exception {

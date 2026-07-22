@@ -38,7 +38,6 @@ class HealthControllerIT {
     registry.add("app.auth.password-reset-expiration-minutes", () -> "60");
     registry.add("app.auth.refresh-cookie-name", () -> "refreshToken");
     registry.add("app.auth.cookie-secure", () -> "false");
-    registry.add("app.email.api-key", () -> "test-key");
     registry.add("app.email.from", () -> "test@example.com");
     registry.add("app.email.frontend-base-url", () -> "http://localhost:5173");
   }

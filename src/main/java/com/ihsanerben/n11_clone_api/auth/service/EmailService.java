@@ -1,15 +1,19 @@
 package com.ihsanerben.n11_clone_api.auth.service;
 
 import com.ihsanerben.n11_clone_api.auth.config.EmailProperties;
-import java.util.Map;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.mail.MailException;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 @Service
 @RequiredArgsConstructor
-public class ResendEmailService {
+public class EmailService {
+  private final JavaMailSender mailSender;
   private final EmailProperties properties;
 
   public void sendVerification(String recipient, String rawToken) {
@@ -29,15 +33,17 @@ public class ResendEmailService {
   }
 
   private void send(String recipient, String subject, String html) {
-    RestClient.builder()
-        .baseUrl("https://api.resend.com")
-        .build()
-        .post()
-        .uri("/emails")
-        .header("Authorization", "Bearer " + properties.apiKey())
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(Map.of("from", properties.from(), "to", recipient, "subject", subject, "html", html))
-        .retrieve()
-        .toBodilessEntity();
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper =
+          new MimeMessageHelper(message, false, StandardCharsets.UTF_8.name());
+      helper.setFrom(properties.from());
+      helper.setTo(recipient);
+      helper.setSubject(subject);
+      helper.setText(html, true);
+      mailSender.send(message);
+    } catch (MessagingException | MailException exception) {
+      throw new EmailDeliveryException(exception);
+    }
   }
 }

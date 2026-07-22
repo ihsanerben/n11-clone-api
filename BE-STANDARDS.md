@@ -50,7 +50,7 @@ Bu doküman, bu projenin backend'i için mimari kararları ve kodlama standartla
 - Yetkilendirme her zaman deklaratif (`@PreAuthorize("hasRole('...')")`); Controller/Service içinde manuel `if (user == null)` veya rol string karşılaştırması yasak.
 - Sahiplik kontrolü (bir kaynağın gerçekten o kullanıcıya/satıcıya ait olduğu) sorgu seviyesinde yapılır (`findByIdAndSellerId` gibi), asla "çek, sonra kod içinde karşılaştır" değil.
 - CORS: tek, açık origin (`*` yasak) + `Access-Control-Allow-Credentials: true`.
-- Secrets (`JWT_SECRET`, `RESEND_API_KEY` vb.) yalnızca environment variable; kodda veya `application.yaml`'da default değer yok.
+- Secrets (`JWT_SECRET`, `MAIL_PASSWORD` vb.) yalnızca environment variable; kodda veya `application.yaml`'da default değer yok.
 - Admin self-serve bir endpoint ile oluşturulmaz — yalnızca elle DB güncellemesi.
 - Rate limiting hassas endpoint'lerde zorunlu (`login`, `register`, `checkout`, `forgot-password`).
 - Yerel geliştirmede `app.auth.cookie-secure=false` hem `Secure` bayrağını kapatır hem `SameSite=Lax` seçer; prod'da değer her zaman `true` olur ve `SameSite=None` kullanılır.
