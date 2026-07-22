@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ihsanerben.n11_clone_api.auth.service.ResendEmailService;
+import com.ihsanerben.n11_clone_api.auth.service.EmailService;
 import com.ihsanerben.n11_clone_api.auth.service.TokenService;
 import com.ihsanerben.n11_clone_api.user.entity.User;
 import com.ihsanerben.n11_clone_api.user.entity.UserRole;
@@ -46,7 +46,6 @@ class AddressControllerIT {
     registry.add("app.auth.password-reset-expiration-minutes", () -> "60");
     registry.add("app.auth.refresh-cookie-name", () -> "refreshToken");
     registry.add("app.auth.cookie-secure", () -> "false");
-    registry.add("app.email.api-key", () -> "test");
     registry.add("app.email.from", () -> "test@example.com");
     registry.add("app.email.frontend-base-url", () -> "http://localhost:5173");
   }
@@ -54,7 +53,7 @@ class AddressControllerIT {
   @Autowired MockMvc mvc;
   @Autowired UserRepository users;
   @Autowired TokenService tokens;
-  @MockitoBean ResendEmailService email;
+  @MockitoBean EmailService email;
 
   @Test
   void shouldManageOnlyOwnAddressesAndKeepOneDefault() throws Exception {

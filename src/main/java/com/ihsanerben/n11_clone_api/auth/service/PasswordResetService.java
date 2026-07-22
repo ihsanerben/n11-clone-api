@@ -22,7 +22,7 @@ public class PasswordResetService {
   private final RefreshTokenRepository refreshTokens;
   private final PasswordEncoder passwordEncoder;
   private final TokenService tokenService;
-  private final ResendEmailService emailService;
+  private final EmailService emailService;
   private final AuthProperties properties;
 
   @Transactional

@@ -81,8 +81,10 @@ Staj projesindeki (`ecommerce-simulation-api`) git geçmişinden aynen taşınan
 | `PASSWORD_RESET_EXPIRATION_MINUTES` | Şifre sıfırlama token ömrü (varsayılan `60`) |
 | `CORS_ALLOWED_ORIGIN` | Frontend'in Vercel URL'i (yerelde `http://localhost:5173`) |
 | `COOKIE_SECURE` | Refresh token cookie'sinin `Secure` bayrağı — yerelde `false`, Railway'de `true` (varsayılan) |
-| `RESEND_API_KEY` | Doğrulama/şifre sıfırlama emaili göndermek için |
-| `RESEND_FROM_EMAIL` | Resend üzerinde doğrulanmış gönderici adresi |
+| `MAIL_HOST`, `MAIL_PORT` | SMTP sunucusu (`smtp.gmail.com:587`) |
+| `MAIL_USERNAME` | Doğrulama/şifre sıfırlama emaillerini gönderen Gmail hesabı |
+| `MAIL_PASSWORD` | Gmail için oluşturulan Google App Password; normal hesap şifresi değil |
+| `MAIL_FROM` | Emaillerde görünen gönderici Gmail adresi |
 | `FRONTEND_BASE_URL` | Şifre sıfırlama linkinin işaret edeceği adres (örn. `https://app.domain.com/reset-password`) |
 
 **Frontend (Vercel'de tanımlanır):**

@@ -23,7 +23,7 @@ class PasswordResetServiceTest {
   @Mock RefreshTokenRepository refreshTokens;
   @Mock PasswordEncoder passwordEncoder;
   @Mock TokenService tokenService;
-  @Mock ResendEmailService emailService;
+  @Mock EmailService emailService;
   PasswordResetService service;
 
   @BeforeEach
